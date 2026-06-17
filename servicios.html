@@ -65,11 +65,21 @@
 
     <style>
         /* AWWWARDS LEVEL STYLES */
+        html.lenis, html.lenis body { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto !important; }
+        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+        .lenis.lenis-stopped { overflow: hidden; }
+        .lenis.lenis-scrolling iframe { pointer-events: none; }
+        
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             background-color: #0F172A;
             color: #fff;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
             cursor: none; /* Hide default cursor for custom cursor */
         }
 
@@ -168,26 +178,45 @@
 
     <!-- Navbar -->
     <nav id="main-nav" class="fixed top-0 left-0 w-full px-6 md:px-12 py-6 flex justify-between items-center z-[10000] transition-all duration-300 bg-transparent border-b border-transparent">
-        <a href="#" class="hover-trigger"><img src="img/Logo-blanco.png" alt="DAMA Talent Solutions" class="h-10 md:h-14 w-auto object-contain" style="image-rendering: -webkit-optimize-contrast;"></a>
+        <a href="index.html" class="hover-trigger relative z-[10001]"><img src="img/Logo-blanco.png" alt="DAMA Talent Solutions" class="h-10 md:h-14 w-auto object-contain" style="image-rendering: -webkit-optimize-contrast;"></a>
+        
+        <!-- Desktop Menu -->
         <div class="hidden md:flex gap-6 lg:gap-8 text-[10px] lg:text-xs font-sans uppercase tracking-widest font-medium text-white">
             <a href="index.html" class="hover-trigger relative group hover:text-brand-accent transition-colors">
                 Home
                 <span class="absolute -bottom-1 left-0 w-0 h-px bg-brand-accent transition-all group-hover:w-full"></span>
             </a>
-            <a href="#nosotros" class="hover-trigger relative group hover:text-brand-accent transition-colors">
+            <a href="index.html#nosotros" class="hover-trigger relative group hover:text-brand-accent transition-colors">
                 Nosotros
                 <span class="absolute -bottom-1 left-0 w-0 h-px bg-brand-accent transition-all group-hover:w-full"></span>
             </a>
-            <a href="servicios.html" class="hover-trigger relative group text-brand-accent transition-colors">
+            <a href="servicios.html" class="hover-trigger relative group hover:text-brand-accent transition-colors">
                 Servicios
-                <span class="absolute -bottom-1 left-0 w-full h-px bg-brand-accent transition-all"></span>
+                <span class="absolute -bottom-1 left-0 w-0 h-px bg-brand-accent transition-all group-hover:w-full"></span>
             </a>
             <a href="#contacto" class="hover-trigger relative group hover:text-brand-accent transition-colors">
                 Contacto
                 <span class="absolute -bottom-1 left-0 w-0 h-px bg-brand-accent transition-all group-hover:w-full"></span>
             </a>
         </div>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobile-menu-btn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 z-[10001] hover-trigger" aria-label="Abrir Menú">
+            <span class="w-6 h-px bg-white transition-all duration-300 origin-right"></span>
+            <span class="w-6 h-px bg-white transition-all duration-300"></span>
+            <span class="w-6 h-px bg-white transition-all duration-300 origin-right"></span>
+        </button>
     </nav>
+
+    <!-- Fullscreen Mobile Menu Overlay -->
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-[#0F172A]/95 backdrop-blur-xl z-[9999] opacity-0 pointer-events-none flex flex-col justify-center items-center px-6 transition-opacity duration-500">
+        <div class="flex flex-col gap-8 text-center mt-12 w-full">
+            <a href="index.html" class="mobile-link font-display text-4xl uppercase text-white hover:text-brand-accent transition-colors opacity-0 translate-y-8">Home</a>
+            <a href="index.html#nosotros" class="mobile-link font-display text-4xl uppercase text-white hover:text-brand-accent transition-colors opacity-0 translate-y-8">Nosotros</a>
+            <a href="servicios.html" class="mobile-link font-display text-4xl uppercase text-white hover:text-brand-accent transition-colors opacity-0 translate-y-8">Servicios</a>
+            <a href="#contacto" class="mobile-link font-display text-4xl uppercase text-brand-accent hover:text-white transition-colors opacity-0 translate-y-8">Contacto</a>
+        </div>
+    </div>
 
     <!-- 1. HERO SERVICIOS (Immersive Parallax & SplitType) -->
     <section id="hero-servicios" class="relative w-screen h-screen flex flex-col justify-end px-6 md:px-12 pb-12 overflow-hidden bg-black">
@@ -629,10 +658,48 @@
             duration: 1.5, // Slower, heavier premium feel
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
             smooth: true,
+            smoothTouch: false, // Don't hijack mobile scroll
         });
         lenis.on('scroll', ScrollTrigger.update);
         gsap.ticker.add((time)=>{ lenis.raf(time * 1000) });
         gsap.ticker.lagSmoothing(0);
+
+        // --- Mobile Menu Logic ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+        const spans = mobileMenuBtn?.querySelectorAll('span');
+        let isMenuOpen = false;
+
+        if(mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => {
+                isMenuOpen = !isMenuOpen;
+                if(isMenuOpen) {
+                    // Open
+                    mobileMenuOverlay.classList.remove('pointer-events-none', 'opacity-0');
+                    spans[0].style.transform = 'rotate(-45deg) translate(-5px, 5px)';
+                    spans[1].style.opacity = '0';
+                    spans[2].style.transform = 'rotate(45deg) translate(-4px, -4px)';
+                    gsap.to(mobileLinks, { y: 0, opacity: 1, duration: 0.5, stagger: 0.1, delay: 0.1, ease: "power3.out" });
+                    lenis.stop();
+                } else {
+                    // Close
+                    mobileMenuOverlay.classList.add('pointer-events-none', 'opacity-0');
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                    gsap.to(mobileLinks, { y: 32, opacity: 0, duration: 0.2, ease: "power3.in" });
+                    lenis.start();
+                }
+            });
+
+            // Close on link click
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if (isMenuOpen) mobileMenuBtn.click();
+                });
+            });
+        }
 
         // --- 3. Initial Loader ---
         const tlLoader = gsap.timeline();
