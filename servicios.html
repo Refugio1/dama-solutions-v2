@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth bg-black text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DAMA Talent Solutions | Awwwards Edition</title>
+    
+    <!-- Anti-Clickjacking & Content Security Policy (Hardened) -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com https://cdn.tailwindcss.com; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; connect-src 'self' https:; img-src 'self' data: https:; frame-ancestors 'none'; object-src 'none';">
+    
+    <!-- Premium Fonts: Syne (Ultra Modern) & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Syne', 'sans-serif'],
+                    },
+                    colors: {
+                        black: '#0F172A',
+                        white: '#FFFFFF',
+                        brand: {
+                            black: '#0F172A', // Gris 900
+                            dark: '#0E2A47', // Azul 900
+                            border: '#1F5AA6', // Azul 700
+                            accent: '#A0E6FF', // Teal
+                            accentHover: '#2C7BE5', // Azul 500
+                            muted: '#CBD5E1', // Gris 300
+                            light: '#F7F9FC', // Gris 50
+                            
+                            blue: {
+                                900: '#0E2A47',
+                                700: '#1F5AA6',
+                                500: '#2C7BE5',
+                                100: '#E7F0FF'
+                            },
+                            gray: {
+                                50: '#F7F9FC',
+                                100: '#F1F5F9',
+                                300: '#CBD5E1',
+                                600: '#64748B',
+                                900: '#0F172A'
+                            },
+                            teal: '#A0E6FF',
+                            success: '#10B981',
+                            warning: '#F59E0B',
+                            error: '#EF4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* AWWWARDS LEVEL STYLES */
+        body {
+            background-color: #0F172A;
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            cursor: none; /* Hide default cursor for custom cursor */
+        }
+
+        /* Custom Cursor */
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999; pointer-events: none;
+        }
+        .cursor-dot {
+            width: 6px; height: 6px;
+            background-color: #A0E6FF;
+        }
+        .cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(160, 230, 255, 0.4);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+        
+        /* Cursor Hover States */
+        body.hovering .cursor-outline {
+            width: 60px; height: 60px;
+            background-color: rgba(160, 230, 255, 0.1);
+            border-color: #A0E6FF;
+        }
+        body.dragging .cursor-outline {
+            width: 80px; height: 80px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: #fff;
+        }
+
+        /* Initial Preloader */
+        .loader {
+            position: fixed; inset: 0;
+            background: #0F172A; z-index: 10000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .loader-text {
+            font-family: 'Syne', sans-serif;
+            font-size: 2rem; font-weight: 700;
+            letter-spacing: 0.2em; text-transform: uppercase;
+            overflow: hidden;
+        }
+        .loader-bar-wrap {
+            width: 200px; height: 1px;
+            background: #1F5AA6; margin-top: 2rem;
+            position: relative; overflow: hidden;
+        }
+        .loader-bar {
+            position: absolute; top: 0; left: 0;
+            height: 100%; width: 0%;
+            background: #A0E6FF;
+        }
+
+        /* Noise Texture */
+        .noise {
+            position: fixed; inset: 0; z-index: 9990;
+            pointer-events: none; opacity: 0.04; mix-blend-mode: screen;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Lenis Smooth Scroll */
+        html.lenis { height: auto; }
+        .lenis.lenis-smooth { scroll-behavior: auto; }
+
+        /* Typography */
+        ::selection { background: #A0E6FF; color: #FFFFFF; }
+        .line { overflow: hidden; padding-bottom: 0.2em; margin-bottom: -0.2em; } /* For SplitType */
+        
+        /* Magnetic Button Wrappers */
+        .magnetic-wrap { display: inline-block; padding: 2rem; margin: -2rem; }
+        
+        /* Custom Scrollbar hidden for premium feel */
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Noise -->
+    <div class="noise"></div>
+
+    <!-- Preloader -->
+    <div class="loader">
+        <div class="loader-text">
+            <div class="line"><span class="loader-word inline-block translate-y-full">DAMA.</span></div>
+        </div>
+        <div class="loader-bar-wrap">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <nav id="main-nav" class="fixed top-0 left-0 w-full px-6 md:px-12 py-6 flex justify-between items-center z-[10000] transition-all duration-300 bg-transparent border-b border-transparent">
+        <a href="#" class="hover-trigger"><img src="img/Logo-blanco.png" alt="DAMA Talent Solutions" class="h-10 md:h-14 w-auto object-contain" style="image-rendering: -webkit-optimize-contrast;"></a>
+        <div class="hidden md:flex gap-6 lg:gap-8 text-[10px] lg:text-xs font-sans uppercase tracking-widest font-medium text-white">
+            <a href="index-v2.html" class="hover-trigger relative group hover:text-brand-accent transition-colors">
+                Home
+                <span class="absolute -bottom-1 left-0 w-0 h-px bg-brand-accent transition-all group-hover:w-full"></span>
+            </a>
+            <a href="#nosotros" class="hover-trigger relative group hover:text-brand-accent transition-colors">
+                Nosotros
+                <span class="absolute -bottom-1 left-0 w-0 h-px bg-brand-accent transition-all group-hover:w-full"></span>
+            </a>
+            <a href="servicios.html" class="hover-trigger relative group text-brand-accent transition-colors">
+                Servicios
+                <span class="absolute -bottom-1 left-0 w-full h-px bg-brand-accent transition-all"></span>
+            </a>
+            <a href="#contacto" class="hover-trigger relative group hover:text-brand-accent transition-colors">
+                Contacto
+                <span class="absolute -bottom-1 left-0 w-0 h-px bg-brand-accent transition-all group-hover:w-full"></span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- 1. HERO SERVICIOS (Immersive Parallax & SplitType) -->
+    <section id="hero-servicios" class="relative w-screen h-screen flex flex-col justify-end px-6 md:px-12 pb-12 overflow-hidden bg-black">
+        
+        <!-- Hero Background -->
+        <div class="absolute inset-0 z-0 origin-center hero-bg-scale overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?q=80&w=2000" class="w-full h-full object-cover filter grayscale sepia-[.1] hue-rotate-[10deg] opacity-30 hero-img-parallax">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-[1400px] mx-auto flex flex-col md:flex-row justify-between items-end gap-12">
+            
+            <div class="md:w-2/3">
+                <p class="text-brand-accent font-sans uppercase tracking-[0.3em] text-xs font-bold mb-8 hero-fade opacity-0">DAMA Talent Solutions</p>
+                <h1 class="split-hero text-[10vw] md:text-[7vw] lg:text-[6vw] font-display font-medium leading-[0.85] tracking-tighter uppercase text-white m-0">
+                    Soluciones<br>de talento<br>para industrias<br><span class="text-brand-accent text-outline">de alta exigencia</span>
+                </h1>
+            </div>
+
+            <div class="md:w-1/3 flex flex-col items-start md:items-end text-left md:text-right">
+                <p class="font-sans text-lg text-brand-light font-light leading-relaxed mb-6 hero-fade opacity-0 text-balance">
+                    Acompañamos a empresas en la búsqueda de talento clave para posiciones críticas en energía, oil & gas, construcción, automotriz, manufactura, industria pesada, minería y aeroespacial.
+                </p>
+                <p class="font-display text-xl text-brand-accent font-medium mb-12 hero-fade opacity-0">
+                    Procesos especializados y confidenciales.
+                </p>
+                
+                <div class="magnetic-wrap hover-trigger hero-fade opacity-0">
+                    <a href="#contacto" class="magnetic-btn w-32 h-32 rounded-full border border-white/20 text-white flex flex-col items-center justify-center text-center font-display uppercase font-bold text-xs tracking-widest leading-tight hover:bg-white hover:text-black transition-colors">
+                        <span>Iniciar</span><span>Búsqueda</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- 2. SERVICIOS PRINCIPALES (STICKY IMAGE SWITCHER AWWWARDS) -->
+    <section id="servicios-principales" class="bg-black relative z-20 border-y border-white/5">
+        <div class="flex flex-col lg:flex-row">
+            
+            <!-- Left: Sticky Column with Title and Background Image -->
+            <div class="lg:w-1/2 lg:h-screen sticky top-0 flex flex-col justify-end p-12 lg:p-24 border-r border-white/5 bg-black z-20 hidden lg:flex overflow-hidden">
+                
+                <!-- Background Crossfading Images -->
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=1000" id="sticky-img-1" class="absolute inset-0 w-full h-full object-cover opacity-100 transition-all duration-1000 scale-105" alt="Executive Search">
+                <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1000" id="sticky-img-2" class="absolute inset-0 w-full h-full object-cover opacity-0 transition-all duration-1000 scale-105" alt="Reclutamiento Técnico">
+                
+                <!-- Overlay Gradient for Readability -->
+                <div class="absolute inset-0 bg-gradient-to-t from-[#060A14] via-[#060A14]/60 to-transparent"></div>
+
+                <!-- Content over background -->
+                <div class="relative z-10 w-full">
+                    <span class="text-brand-accent text-xs uppercase tracking-widest font-bold mb-6 block">Áreas de Especialidad</span>
+                    <h2 class="font-display text-5xl lg:text-7xl font-medium leading-[0.9] text-white tracking-tight">
+                        Nuestros<br>Servicios
+                    </h2>
+                </div>
+            </div>
+
+            <!-- Right: Scrolling Content -->
+            <div class="lg:w-1/2 bg-[#060A14] relative z-10">
+                
+                <!-- Mobile Only Title (since desktop is hidden) -->
+                <div class="lg:hidden p-12 bg-black border-b border-white/10">
+                    <h2 class="font-display text-5xl font-medium leading-[0.9] text-white">Nuestros Servicios</h2>
+                </div>
+
+                <!-- Content 1: Executive Search -->
+                <div class="service-text-block flex flex-col justify-center min-h-screen p-12 lg:p-24 relative group border-b border-white/5" data-img="sticky-img-1">
+                    <span class="absolute top-12 left-12 lg:-left-12 font-display text-[15vw] lg:text-[10vw] leading-none text-white/5 pointer-events-none transition-transform duration-700 group-hover:scale-110 hidden lg:block">01</span>
+                    
+                    <div class="relative z-10 mt-20 lg:mt-0">
+                        <i class="ph-light ph-target text-6xl text-brand-accent mb-12"></i>
+                        <h3 class="font-display text-4xl lg:text-5xl mb-8 text-white leading-[1.1] font-medium tracking-tight">Executive Search<br>& Headhunting</h3>
+                        <p class="font-sans text-brand-muted font-light text-xl mb-16">Para posiciones de alta dirección, dirección funcional, gerencias estratégicas y liderazgo crítico dentro de sectores técnicos e industriales.</p>
+                        
+                        <div class="space-y-12 border-l border-brand-accent/30 pl-8 lg:pl-12">
+                            <div class="hover-trigger relative">
+                                <div class="absolute -left-[37px] lg:-left-[53px] top-2.5 w-3 h-3 rounded-full bg-[#060A14] border-2 border-brand-accent group-hover:bg-brand-accent transition-colors"></div>
+                                <h4 class="font-sans text-white font-bold mb-2 text-xl tracking-wide">Búsqueda confidencial</h4>
+                                <p class="font-sans text-brand-muted font-light text-base">Accedemos a perfiles estratégicos que normalmente no participan en portales de empleo.</p>
+                            </div>
+                            <div class="hover-trigger relative">
+                                <div class="absolute -left-[37px] lg:-left-[53px] top-2.5 w-3 h-3 rounded-full bg-[#060A14] border-2 border-brand-accent group-hover:bg-brand-accent transition-colors"></div>
+                                <h4 class="font-sans text-white font-bold mb-2 text-xl tracking-wide">Mapeo de mercado</h4>
+                                <p class="font-sans text-brand-muted font-light text-base">Analizamos el ecosistema sectorial, empresas objetivo y estructuras organizacionales.</p>
+                            </div>
+                            <div class="hover-trigger relative">
+                                <div class="absolute -left-[37px] lg:-left-[53px] top-2.5 w-3 h-3 rounded-full bg-[#060A14] border-2 border-brand-accent group-hover:bg-brand-accent transition-colors"></div>
+                                <h4 class="font-sans text-white font-bold mb-2 text-xl tracking-wide">Evaluación especializada</h4>
+                                <p class="font-sans text-brand-muted font-light text-base">Validamos trayectoria, experiencia técnica y motivadores de cambio.</p>
+                            </div>
+                            <div class="hover-trigger relative">
+                                <div class="absolute -left-[37px] lg:-left-[53px] top-2.5 w-3 h-3 rounded-full bg-[#060A14] border-2 border-brand-accent group-hover:bg-brand-accent transition-colors"></div>
+                                <h4 class="font-sans text-white font-bold mb-2 text-xl tracking-wide">Acompañamiento integral</h4>
+                                <p class="font-sans text-brand-muted font-light text-base">Apoyamos el cierre facilitando conversaciones claras y una transición ordenada.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content 2: Reclutamiento -->
+                <div class="service-text-block flex flex-col justify-center min-h-screen p-12 lg:p-24 bg-[#0B1121] relative group" data-img="sticky-img-2">
+                    <span class="absolute top-12 left-12 lg:-left-12 font-display text-[15vw] lg:text-[10vw] leading-none text-white/5 pointer-events-none transition-transform duration-700 group-hover:scale-110 hidden lg:block">02</span>
+                    
+                    <div class="relative z-10 mt-20 lg:mt-0">
+                        <i class="ph-light ph-wrench text-6xl text-white mb-12"></i>
+                        <h3 class="font-display text-4xl lg:text-5xl mb-8 text-white leading-[1.1] font-medium tracking-tight">Reclutamiento Técnico<br>& Especializado</h3>
+                        <p class="font-sans text-brand-muted font-light text-xl mb-16">Con enfoque en la agilidad y precisión para mandos medios y perfiles de alta especialidad técnica.</p>
+                        
+                        <div class="space-y-12 border-l border-white/20 pl-8 lg:pl-12">
+                            <div class="hover-trigger relative">
+                                <div class="absolute -left-[37px] lg:-left-[53px] top-2.5 w-3 h-3 rounded-full bg-[#0B1121] border-2 border-white group-hover:bg-white transition-colors"></div>
+                                <h4 class="font-sans text-white font-bold mb-2 text-xl tracking-wide">Filtrado riguroso</h4>
+                                <p class="font-sans text-brand-muted font-light text-base">Evaluamos competencias técnicas, experiencia sectorial, estabilidad y motivación.</p>
+                            </div>
+                            <div class="hover-trigger relative">
+                                <div class="absolute -left-[37px] lg:-left-[53px] top-2.5 w-3 h-3 rounded-full bg-[#0B1121] border-2 border-white group-hover:bg-white transition-colors"></div>
+                                <h4 class="font-sans text-white font-bold mb-2 text-xl tracking-wide">Procesos ágiles</h4>
+                                <p class="font-sans text-brand-muted font-light text-base">Optimizamos cada etapa para avanzar con velocidad sin sacrificar profundidad.</p>
+                            </div>
+                            <div class="hover-trigger relative">
+                                <div class="absolute -left-[37px] lg:-left-[53px] top-2.5 w-3 h-3 rounded-full bg-[#0B1121] border-2 border-white group-hover:bg-white transition-colors"></div>
+                                <h4 class="font-sans text-white font-bold mb-2 text-xl tracking-wide">Red sectorial activa</h4>
+                                <p class="font-sans text-brand-muted font-light text-base">Conectamos con especialistas y líderes técnicos previamente identificados.</p>
+                            </div>
+                            <div class="hover-trigger relative">
+                                <div class="absolute -left-[37px] lg:-left-[53px] top-2.5 w-3 h-3 rounded-full bg-[#0B1121] border-2 border-white group-hover:bg-white transition-colors"></div>
+                                <h4 class="font-sans text-white font-bold mb-2 text-xl tracking-wide">Soporte específico</h4>
+                                <p class="font-sans text-brand-muted font-light text-base">Apoyamos búsquedas para proyectos, expansiones o posiciones de alta demanda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. METODOLOGÍA (HORIZONTAL SCROLL AWWWARDS) -->
+    <section id="metodologia-horizontal" class="h-screen w-full flex flex-nowrap overflow-hidden bg-black border-y border-white/5 relative z-10">
+        
+        <!-- Panel 1: Intro -->
+        <div class="h-scroll-panel w-screen h-screen shrink-0 flex flex-col justify-center px-6 md:px-20 relative bg-brand-blue-900 border-r border-white/5">
+            <span class="text-brand-accent text-xs uppercase tracking-widest font-bold mb-6 block met-subtitle">Proceso Riguroso</span>
+            <h2 class="font-display text-6xl md:text-[8vw] leading-[0.85] tracking-tight uppercase max-w-6xl text-white met-title">
+                La Metodología
+            </h2>
+            <div class="font-display text-6xl md:text-[8vw] leading-[0.85] tracking-tight uppercase max-w-6xl mt-2 met-dama">
+                <span class="relative inline-block">
+                    <!-- Bottom Layer: Thick Stroke -->
+                    <span class="text-transparent relative z-0" style="-webkit-text-stroke: 4px #A0E6FF;">DAMA</span>
+                    <!-- Top Layer: Fill matches background, covers inner stroke artifacts -->
+                    <span class="absolute inset-0 text-brand-blue-900 z-10 pointer-events-none flex items-center justify-center text-left" aria-hidden="true" style="justify-content: flex-start;">DAMA</span>
+                </span>
+            </div>
+            <div class="absolute bottom-12 right-12 md:right-20 text-brand-muted flex items-center gap-4 text-xs font-sans uppercase tracking-widest met-nav">
+                <span>Descubrir Fases</span> 
+                <div class="w-12 h-px bg-brand-accent/50"></div>
+                <i class="ph-light ph-arrow-right text-brand-accent animate-pulse"></i>
+            </div>
+        </div>
+
+        <!-- Panel 2: Fases 1 y 2 -->
+        <div class="h-scroll-panel w-screen h-screen shrink-0 flex items-center justify-center px-6 md:px-20 bg-black relative border-r border-white/5 group">
+            <div class="absolute top-0 bottom-0 left-1/2 w-px bg-white/5 -translate-x-1/2 hidden md:block"></div>
+            
+            <div class="w-full max-w-[1400px] flex flex-col md:flex-row gap-20">
+                <!-- Fase 1 -->
+                <div class="md:w-1/2 relative z-10">
+                    <span class="font-display text-[15vw] leading-none text-white/5 absolute -top-10 -left-10 pointer-events-none group-hover:text-brand-accent/5 transition-colors duration-700">01</span>
+                    <div class="relative pt-20 pl-6 border-l-2 border-brand-accent hover:border-white transition-colors duration-300">
+                        <i class="ph-light ph-stethoscope text-5xl text-brand-accent mb-6"></i>
+                        <h3 class="font-display text-4xl mb-4 text-white">Diagnóstico técnico del rol</h3>
+                        <p class="font-sans text-brand-muted font-light text-lg">Entendemos el contexto de la posición, los objetivos del negocio, el entorno operativo, la cultura y los retos específicos del sector.</p>
+                    </div>
+                </div>
+                <!-- Fase 2 -->
+                <div class="md:w-1/2 relative z-10 mt-20 md:mt-40">
+                    <span class="font-display text-[15vw] leading-none text-white/5 absolute -top-10 -left-10 pointer-events-none group-hover:text-white/10 transition-colors duration-700">02</span>
+                    <div class="relative pt-20 pl-6 border-l-2 border-white/20 hover:border-brand-accent transition-colors duration-300">
+                        <i class="ph-light ph-factory text-5xl text-white mb-6"></i>
+                        <h3 class="font-display text-4xl mb-4 text-white">Inmersión en la operación</h3>
+                        <p class="font-sans text-brand-muted font-light text-lg">Recomendamos realizar una visita física a sus instalaciones para conocer de primera mano la operación, el entorno de trabajo y los retos reales.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 3: Fases 3 y 4 -->
+        <div class="h-scroll-panel w-screen h-screen shrink-0 flex items-center justify-center px-6 md:px-20 bg-black relative border-r border-white/5 group">
+            <div class="absolute top-0 bottom-0 left-1/2 w-px bg-white/5 -translate-x-1/2 hidden md:block"></div>
+            
+            <div class="w-full max-w-[1400px] flex flex-col md:flex-row gap-20">
+                <!-- Fase 3 -->
+                <div class="md:w-1/2 relative z-10">
+                    <span class="font-display text-[15vw] leading-none text-white/5 absolute -top-10 -left-10 pointer-events-none group-hover:text-brand-accent/5 transition-colors duration-700">03</span>
+                    <div class="relative pt-20 pl-6 border-l-2 border-brand-accent hover:border-white transition-colors duration-300">
+                        <i class="ph-light ph-map-trifold text-5xl text-brand-accent mb-6"></i>
+                        <h3 class="font-display text-4xl mb-4 text-white">Mapeo de mercado</h3>
+                        <p class="font-sans text-brand-muted font-light text-lg">Identificamos empresas objetivo, perfiles relevantes y talento estratégico dentro del ecosistema industrial donde se encuentra la experiencia requerida.</p>
+                    </div>
+                </div>
+                <!-- Fase 4 -->
+                <div class="md:w-1/2 relative z-10 mt-20 md:mt-40">
+                    <span class="font-display text-[15vw] leading-none text-white/5 absolute -top-10 -left-10 pointer-events-none group-hover:text-white/10 transition-colors duration-700">04</span>
+                    <div class="relative pt-20 pl-6 border-l-2 border-white/20 hover:border-brand-accent transition-colors duration-300">
+                        <i class="ph-light ph-users-three text-5xl text-white mb-6"></i>
+                        <h3 class="font-display text-4xl mb-4 text-white">Sourcing especializado</h3>
+                        <p class="font-sans text-brand-muted font-light text-lg">Activamos una búsqueda directa, confidencial y enfocada en perfiles que no siempre participan de forma activa en portales de empleo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 4: Fases 5 y 6 -->
+        <div class="h-scroll-panel w-screen h-screen shrink-0 flex items-center justify-center px-6 md:px-20 bg-black relative border-r border-white/5 group">
+            <div class="absolute top-0 bottom-0 left-1/2 w-px bg-white/5 -translate-x-1/2 hidden md:block"></div>
+            
+            <div class="w-full max-w-[1400px] flex flex-col md:flex-row gap-20">
+                <!-- Fase 5 -->
+                <div class="md:w-1/2 relative z-10">
+                    <span class="font-display text-[15vw] leading-none text-white/5 absolute -top-10 -left-10 pointer-events-none group-hover:text-brand-accent/5 transition-colors duration-700">05</span>
+                    <div class="relative pt-20 pl-6 border-l-2 border-brand-accent hover:border-white transition-colors duration-300">
+                        <i class="ph-light ph-clipboard-text text-5xl text-brand-accent mb-6"></i>
+                        <h3 class="font-display text-4xl mb-4 text-white">Evaluación integral</h3>
+                        <p class="font-sans text-brand-muted font-light text-lg">Analizamos experiencia técnica, trayectoria, liderazgo, motivadores de cambio, expectativas económicas y compatibilidad con la cultura.</p>
+                    </div>
+                </div>
+                <!-- Fase 6 -->
+                <div class="md:w-1/2 relative z-10 mt-20 md:mt-40">
+                    <span class="font-display text-[15vw] leading-none text-white/5 absolute -top-10 -left-10 pointer-events-none group-hover:text-white/10 transition-colors duration-700">06</span>
+                    <div class="relative pt-20 pl-6 border-l-2 border-white/20 hover:border-brand-accent transition-colors duration-300">
+                        <i class="ph-light ph-presentation-chart text-5xl text-white mb-6"></i>
+                        <h3 class="font-display text-4xl mb-4 text-white">Presentación de shortlist</h3>
+                        <p class="font-sans text-brand-muted font-light text-lg">Compartimos una terna reducida de candidatos alineados al perfil, con información clara sobre su experiencia, fortalezas y puntos relevantes.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 5: Fase 7 -->
+        <div class="h-scroll-panel w-screen h-screen shrink-0 flex items-center justify-center px-6 md:px-20 bg-brand-light relative group">
+            <div class="w-full max-w-[1000px] text-center relative z-10 hover-trigger">
+                <span class="font-display text-[25vw] md:text-[20vw] leading-none text-black/5 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-colors duration-700">07</span>
+                <div class="relative pt-20">
+                    <i class="ph-light ph-handshake text-7xl text-brand-accent mb-8 transform group-hover:scale-125 transition-transform duration-500"></i>
+                    <h3 class="font-display text-5xl md:text-7xl mb-8 text-black">Cierre e integración</h3>
+                    <p class="font-sans text-black/70 font-light text-2xl">Apoyamos entrevistas, retroalimentación, negociación, referencias y seguimiento posterior a la incorporación para favorecer una transición ordenada.</p>
+                </div>
+            </div>
+        </div>
+        
+    </section>
+
+    <!-- 4. GARANTÍA (TYPOGRAPHIC BRUTALISM AWWWARDS) -->
+    <section class="relative bg-black text-white overflow-hidden border-y border-white/5 py-32 lg:py-48">
+        
+        <!-- Massive Kinetic Marquee Background -->
+        <div class="absolute top-1/2 left-0 -translate-y-1/2 w-max flex overflow-hidden pointer-events-none z-0 opacity-10">
+            <div id="garantia-marquee" class="flex whitespace-nowrap">
+                <span class="font-display text-[25vw] leading-none text-transparent [-webkit-text-stroke:2px_rgba(255,255,255,1)] mr-12 uppercase tracking-tighter">12 MESES</span>
+                <span class="font-display text-[25vw] leading-none text-transparent [-webkit-text-stroke:2px_rgba(255,255,255,1)] mr-12 uppercase tracking-tighter">12 MESES</span>
+                <span class="font-display text-[25vw] leading-none text-transparent [-webkit-text-stroke:2px_rgba(255,255,255,1)] mr-12 uppercase tracking-tighter">12 MESES</span>
+            </div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-[1600px] mx-auto px-6 md:px-12">
+            
+            <!-- Architectural Grid Layout -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-0 border-y border-white/10">
+                
+                <!-- Left Col: Title (Spans 5 cols) -->
+                <div class="lg:col-span-5 flex flex-col justify-between py-12 lg:py-24">
+                    <div>
+                        <div class="flex items-center gap-4 mb-12">
+                            <div class="w-12 h-px bg-brand-accent"></div>
+                            <span class="text-brand-accent text-xs uppercase tracking-widest font-bold">Garantía DAMA</span>
+                        </div>
+                        <h2 class="font-display text-6xl md:text-8xl font-medium tracking-tight mb-8 leading-[0.9]">
+                            Protección<br>Total.<br>
+                            <span class="italic font-light text-white/40 block mt-2">Sin letras<br>pequeñas.</span>
+                        </h2>
+                    </div>
+                </div>
+
+                <!-- Center Col: The Big Number (Spans 3 cols) -->
+                <div class="lg:col-span-3 flex items-center justify-start lg:justify-center lg:border-x border-white/10 py-12 lg:py-24 px-0 lg:px-12">
+                    <div class="text-left lg:text-center group hover-trigger">
+                        <span class="block font-sans uppercase tracking-[0.3em] text-xs text-brand-muted mb-6">Cobertura Máxima</span>
+                        <div class="relative inline-block">
+                            <span class="font-display text-9xl md:text-[12rem] leading-none text-white block group-hover:-translate-y-4 transition-transform duration-700">12</span>
+                            <div class="absolute bottom-4 left-0 w-full h-px bg-brand-accent scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left"></div>
+                        </div>
+                        <span class="block font-display text-4xl md:text-5xl text-brand-accent italic mt-2">Meses</span>
+                    </div>
+                </div>
+
+                <!-- Right Col: Description (Spans 4 cols) -->
+                <div class="lg:col-span-4 flex flex-col justify-center py-12 lg:py-24 lg:pl-16">
+                    <p class="font-sans text-brand-muted text-2xl font-light mb-8 leading-relaxed">
+                        En DAMA Talent Solutions confiamos ciegamente en la solidez de nuestros procesos de evaluación ejecutiva y técnica.
+                    </p>
+                    <p class="font-sans text-white text-lg font-light pb-8 border-b border-white/10">
+                        Nuestras búsquedas incluyen esquemas de garantía definidos según el nivel de la posición.
+                    </p>
+                    <ul class="mt-8 space-y-6">
+                        <li class="flex items-start gap-6 group">
+                            <i class="ph-fill ph-shield-check text-2xl text-brand-accent group-hover:scale-125 transition-transform duration-300"></i>
+                            <span class="font-sans text-base text-brand-muted group-hover:text-white transition-colors duration-300">Protegemos tu inversión de talento.</span>
+                        </li>
+                        <li class="flex items-start gap-6 group">
+                            <i class="ph-fill ph-chart-line-down text-2xl text-brand-accent group-hover:scale-125 transition-transform duration-300"></i>
+                            <span class="font-sans text-base text-brand-muted group-hover:text-white transition-colors duration-300">Reducimos a cero el riesgo de contratación.</span>
+                        </li>
+                        <li class="flex items-start gap-6 group">
+                            <i class="ph-fill ph-users-three text-2xl text-brand-accent group-hover:scale-125 transition-transform duration-300"></i>
+                            <span class="font-sans text-base text-brand-muted group-hover:text-white transition-colors duration-300">Acompañamos la integración a tu cultura.</span>
+                        </li>
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. FOOTER CTA (PARALLAX REVEAL & SPLIT FORMS) -->
+    <footer id="contacto" class="relative z-0 h-auto md:min-h-screen bg-[#0F172A] flex flex-col justify-end footer-parallax">
+        
+        <div class="w-full flex flex-col md:flex-row h-full">
+            
+            <!-- Left Side Title -->
+            <div class="md:w-1/2 p-12 md:p-20 flex flex-col justify-center border-b md:border-b-0 md:border-r border-brand-border bg-brand-blue-900">
+                <h2 class="font-display text-5xl md:text-7xl lg:text-[6vw] font-medium leading-[0.9] tracking-tight mb-8 split-chars">
+                    ¿Listo para fortalecer tu equipo o dar el siguiente paso?
+                </h2>
+                <p class="font-sans text-brand-accent text-2xl font-light">Hablemos hoy mismo.</p>
+            </div>
+
+            <!-- Right Side Split Forms -->
+            <div class="md:w-1/2 flex flex-col h-full bg-brand-dark">
+                
+                <!-- Empresa -->
+                <div class="flex-1 p-12 md:p-20 border-b border-brand-border flex flex-col justify-center">
+                    <span class="text-brand-accent text-xs uppercase tracking-widest font-bold mb-4 block">Soy Empresa</span>
+                    <h3 class="font-display text-3xl mb-8">Solicitar Propuesta</h3>
+                    <!-- Hardened Form: strict validation and explicit methods -->
+                    <form class="flex flex-col space-y-4" id="empresa-form-v2" action="#" method="POST" onsubmit="event.preventDefault(); /* TODO: Implement sanitized submit */">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <input type="text" name="nombre_empresa" id="nombre_empresa" placeholder="Nombre completo" required maxlength="100" class="w-full md:w-1/2 bg-transparent border-b border-white/20 py-3 font-sans text-white focus:outline-none focus:border-brand-accent transition-colors" autocomplete="name">
+                            <input type="tel" name="tel_empresa" id="tel_empresa" placeholder="Teléfono" required maxlength="50" class="w-full md:w-1/2 bg-transparent border-b border-white/20 py-3 font-sans text-white focus:outline-none focus:border-brand-accent transition-colors" autocomplete="tel">
+                        </div>
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <input type="email" name="email_empresa" id="email_empresa" placeholder="Correo empresarial" required maxlength="100" class="w-full md:w-1/2 bg-transparent border-b border-white/20 py-3 font-sans text-white focus:outline-none focus:border-brand-accent transition-colors" autocomplete="email">
+                            <input type="text" name="rfc_empresa" id="rfc_empresa" placeholder="RFC empresarial" required maxlength="50" class="w-full md:w-1/2 bg-transparent border-b border-white/20 py-3 font-sans text-white focus:outline-none focus:border-brand-accent transition-colors">
+                        </div>
+                        <button type="submit" class="hover-trigger mt-6 text-xs uppercase tracking-widest font-bold text-brand-accent flex items-center gap-2 group w-max">
+                            Enviar <i class="ph ph-arrow-right transform group-hover:translate-x-2 transition-transform"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Candidato -->
+                <div class="flex-1 p-12 md:p-20 flex flex-col justify-center">
+                    <span class="text-brand-muted text-xs uppercase tracking-widest font-bold mb-4 block">Soy Candidato</span>
+                    <h3 class="font-display text-3xl mb-8">Cargar CV Confidencial</h3>
+                    <form id="candidato-form-v2" action="#" method="POST" enctype="multipart/form-data" class="flex flex-col space-y-4 h-full" onsubmit="event.preventDefault();">
+                        <input type="text" name="nombre_candidato" id="nombre_candidato" placeholder="Nombre completo" required maxlength="100" class="w-full bg-transparent border-b border-white/20 py-3 font-sans text-white focus:outline-none focus:border-brand-accent transition-colors" autocomplete="name">
+                        <div class="flex flex-col md:flex-row gap-4">
+                            <input type="email" name="email_candidato" id="email_candidato" placeholder="Correo electrónico" required maxlength="100" class="w-full md:w-1/2 bg-transparent border-b border-white/20 py-3 font-sans text-white focus:outline-none focus:border-brand-accent transition-colors" autocomplete="email">
+                            <input type="tel" name="tel_candidato" id="tel_candidato" placeholder="Teléfono" required maxlength="50" class="w-full md:w-1/2 bg-transparent border-b border-white/20 py-3 font-sans text-white focus:outline-none focus:border-brand-accent transition-colors" autocomplete="tel">
+                        </div>
+                        <label for="cv-upload-v2" class="mt-4 flex-1 hover-trigger border border-dashed border-white/20 hover:border-brand-accent p-8 flex flex-col items-center justify-center text-center cursor-pointer group transition-colors w-full min-h-[120px]">
+                            <i class="ph-light ph-upload-simple text-2xl text-brand-muted group-hover:text-brand-accent mb-2 transition-colors"></i>
+                            <span class="font-display text-lg group-hover:text-brand-accent transition-colors block">Arrastrar archivo</span>
+                            <span class="font-sans text-xs text-brand-muted font-light block">PDF o DOCX. Max 5MB</span>
+                            <!-- Hardened input file -->
+                            <input type="file" id="cv-upload-v2" name="cv-upload" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="hidden" required>
+                        </label>
+                        <button type="submit" class="hover-trigger mt-6 text-xs uppercase tracking-widest font-bold text-brand-accent flex items-center gap-2 group w-max">
+                            Enviar CV <i class="ph ph-arrow-right transform group-hover:translate-x-2 transition-transform"></i>
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="w-full bg-black py-6 border-t border-brand-border text-center text-brand-muted text-[10px] font-sans uppercase tracking-widest font-bold">
+            &copy; 2026 DAMA Talent Solutions | Diseñado y Desarrollado por Estrasol.
+        </div>
+    </footer>
+
+    <!-- GSAP, ScrollTrigger, SplitType, Lenis -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/split-type@0.3.3/umd/index.min.js" integrity="sha384-EGEJUW/jVY9D2Tjw1nsJVJ1FobUVvaCMrTMUY4wtbohMa/NP2ZyJ+G5/s8mTz/E9" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.39/dist/lenis.min.js" integrity="sha384-o/NmTUMyj0xBXquK9mLCg/ER0KlJxjnA/2fPgeg6H5acZfxPTGuWiwDSnPZxw/8o" crossorigin="anonymous"></script>
+
+    <script>
+        // Navbar Scroll Effect
+        const mainNav = document.getElementById('main-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                mainNav.classList.remove('bg-transparent', 'border-transparent');
+                mainNav.classList.add('bg-[#0F172A]/80', 'backdrop-blur-md', 'border-white/5');
+            } else {
+                mainNav.classList.add('bg-transparent', 'border-transparent');
+                mainNav.classList.remove('bg-[#0F172A]/80', 'backdrop-blur-md', 'border-white/5');
+            }
+        });
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. Custom Cursor ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        
+        let xToDot = gsap.quickTo(cursorDot, "x", {duration: 0.1, ease: "power3"});
+        let yToDot = gsap.quickTo(cursorDot, "y", {duration: 0.1, ease: "power3"});
+        let xToOutline = gsap.quickTo(cursorOutline, "x", {duration: 0.15, ease: "power3"});
+        let yToOutline = gsap.quickTo(cursorOutline, "y", {duration: 0.15, ease: "power3"});
+        
+        window.addEventListener('mousemove', (e) => {
+            xToDot(e.clientX);
+            yToDot(e.clientY);
+            xToOutline(e.clientX);
+            yToOutline(e.clientY);
+        });
+
+        document.querySelectorAll('.hover-trigger, a, button, .float-card').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+        });
+
+        // --- 2. Lenis Smooth Scroll ---
+        const lenis = new Lenis({
+            duration: 1.5, // Slower, heavier premium feel
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smooth: true,
+        });
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time)=>{ lenis.raf(time * 1000) });
+        gsap.ticker.lagSmoothing(0);
+
+        // --- 3. Initial Loader ---
+        const tlLoader = gsap.timeline();
+        tlLoader.to('.loader-bar', { width: '100%', duration: 1.5, ease: 'power3.inOut' })
+                .to('.loader-word', { y: 0, duration: 1, ease: 'power4.out' }, "-=0.5")
+                .to('.loader', { yPercent: -100, duration: 1, ease: 'power4.inOut', delay: 0.5 })
+                .from('.hero-bg-scale', { scale: 1.3, duration: 2, ease: 'power3.out' }, "-=0.8")
+                .call(initHeroText);
+
+        // --- 4. Hero Text Split & Reveal ---
+        function initHeroText() {
+            const heroText = new SplitType('.split-hero', { types: 'lines, words' });
+            gsap.from(heroText.words, {
+                y: 100,
+                opacity: 0,
+                rotationZ: 5,
+                duration: 1,
+                stagger: 0.05,
+                ease: "power4.out"
+            });
+            gsap.to('.hero-fade', {
+                y: 0, opacity: 1, duration: 1, stagger: 0.1, ease: "power3.out", delay: 0.5
+            });
+        }
+
+        // Hero Image Parallax Scrub
+        gsap.to(".hero-img-parallax", {
+            yPercent: 20,
+            ease: "none",
+            scrollTrigger: { trigger: "#hero", start: "top top", end: "bottom top", scrub: true }
+        });
+
+        // --- 5. Magnetic Buttons ---
+        document.querySelectorAll('.magnetic-wrap').forEach(wrap => {
+            const btn = wrap.querySelector('.magnetic-btn');
+            wrap.addEventListener('mousemove', (e) => {
+                const rect = wrap.getBoundingClientRect();
+                const x = (e.clientX - rect.left - rect.width / 2) * 0.4;
+                const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+                gsap.to(btn, { x: x, y: y, duration: 0.3, ease: 'power2.out' });
+            });
+            wrap.addEventListener('mouseleave', () => {
+                gsap.to(btn, { x: 0, y: 0, duration: 0.8, ease: 'elastic.out(1, 0.3)' });
+            });
+        });
+
+        // --- 6. Advanced Scroll Animations (Servicios & Metodologia) ---
+        
+        // Split text for headings
+        const splitLines = new SplitType('.split-lines', { types: 'lines, words' });
+        gsap.utils.toArray(splitLines.lines).forEach(line => {
+            gsap.from(line, {
+                y: 100,
+                opacity: 0,
+                rotationZ: 2,
+                duration: 1.2,
+                ease: "power4.out",
+                scrollTrigger: {
+                    trigger: line,
+                    start: "top 90%",
+                }
+            });
+        });
+
+        // Timeline for Methodology Panel 1 (Intro)
+        const metTitleSplit = new SplitType('.met-title', { types: 'lines, words' });
+        const metTl = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#metodologia-horizontal',
+                start: "top 80%",
+            }
+        });
+
+        metTl.to('.met-subtitle', { opacity: 1, duration: 0 })
+             .from('.met-subtitle', { y: 30, opacity: 0, duration: 0.8, ease: "power3.out" })
+             .to(metTitleSplit.lines, { opacity: 1, duration: 0 }, "-=0.4")
+             .from(metTitleSplit.lines, { y: 100, opacity: 0, rotationZ: 2, duration: 1.2, stagger: 0.1, ease: "power4.out" }, "-=0.8")
+             .to('.met-dama', { opacity: 1, duration: 0 }, "-=0.8")
+             .from('.met-dama', { y: 100, opacity: 0, duration: 1.2, ease: "power4.out" }, "-=1")
+             .to('.met-nav', { opacity: 1, duration: 0 }, "-=0.5")
+             .from('.met-nav', { y: 20, opacity: 0, duration: 1, ease: "power3.out" }, "-=1");
+
+        const splitChars = new SplitType('.split-chars', { types: 'chars' });
+        gsap.utils.toArray('.split-chars').forEach(heading => {
+            const chars = heading.querySelectorAll('.char');
+            gsap.from(chars, {
+                y: 100,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.02,
+                ease: "power4.out",
+                scrollTrigger: {
+                    trigger: heading,
+                    start: "top 85%",
+                }
+            });
+        });
+
+        // Sticky Media Switcher
+        const serviceTextBlocks = gsap.utils.toArray('.service-text-block');
+        serviceTextBlocks.forEach(block => {
+            ScrollTrigger.create({
+                trigger: block,
+                start: "top 50%",
+                end: "bottom 50%",
+                onEnter: () => switchStickyImage(block.dataset.img),
+                onEnterBack: () => switchStickyImage(block.dataset.img)
+            });
+        });
+
+        function switchStickyImage(targetId) {
+            document.querySelectorAll('#sticky-img-1, #sticky-img-2').forEach(img => {
+                img.style.opacity = '0';
+                img.style.transform = 'scale(1)';
+            });
+            const activeImg = document.getElementById(targetId);
+            if(activeImg) {
+                activeImg.style.opacity = '1';
+                activeImg.style.transform = 'scale(1.05)';
+            }
+        }
+
+        // Brutalist Marquee Animation
+        gsap.to("#garantia-marquee", {
+            xPercent: -33.33,
+            ease: "none",
+            duration: 20,
+            repeat: -1
+        });
+
+        // --- GSAP MatchMedia for Memory Management ---
+        let mm = gsap.matchMedia();
+
+        // Desktop Only
+        mm.add("(min-width: 769px)", () => {
+            // Timeline Horizontal Scroll (Metodologia Awwwards)
+            const scrollPanels = gsap.utils.toArray("#metodologia-horizontal .h-scroll-panel");
+            if(scrollPanels.length > 0) {
+                gsap.to(scrollPanels, {
+                    xPercent: -100 * (scrollPanels.length - 1),
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: "#metodologia-horizontal",
+                        pin: true,
+                        scrub: 1,
+                        snap: {
+                            snapTo: 1 / (scrollPanels.length - 1),
+                            duration: {min: 0.2, max: 0.8},
+                            delay: 0.1,
+                            ease: "power1.inOut"
+                        },
+                        end: () => "+=" + (document.querySelector("#metodologia-horizontal").offsetWidth * scrollPanels.length)
+                    }
+                });
+            }
+
+            // --- 11. Footer Parallax ---
+            gsap.from(".footer-parallax", {
+                yPercent: -30,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#contacto",
+                    start: "top bottom",
+                    end: "bottom bottom",
+                    scrub: true
+                }
+            });
+        });
+
+        // All Screens
+        mm.add("all", () => {
+            // --- 7. Generic Fade-ups & Parallax Text ---
+            gsap.utils.toArray('.fade-up').forEach(el => {
+                gsap.from(el, {
+                    y: 60, opacity: 0, duration: 1, ease: "power3.out",
+                    scrollTrigger: { trigger: el, start: "top 80%" }
+                });
+            });
+
+            gsap.utils.toArray('.parallax-text').forEach(el => {
+                const speed = el.getAttribute('data-speed') || 1;
+                gsap.to(el, {
+                    y: (i, target) => -50 * speed,
+                    ease: "none",
+                    scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: true }
+                });
+            });
+
+            // --- 8. Hitos Counter ---
+            const counterTrigger = document.querySelector('.counter');
+            if(counterTrigger) {
+                ScrollTrigger.create({
+                    trigger: counterTrigger,
+                    start: "top 85%",
+                    once: true,
+                    onEnter: () => {
+                        let target = parseInt(counterTrigger.getAttribute('data-target'));
+                        gsap.to(counterTrigger, { innerHTML: target, duration: 3, snap: { innerHTML: 1 }, ease: "power3.out" });
+                    }
+                });
+                
+                // Scale text on scroll
+                gsap.from(".scale-text", {
+                    scale: 0.5,
+                    transformOrigin: "right center",
+                    ease: "none",
+                    scrollTrigger: { trigger: ".scale-text", start: "top bottom", end: "bottom top", scrub: true }
+                });
+            }
+
+            // --- 9. Word Reveal (Testimonios) ---
+            gsap.utils.toArray('.word-reveal').forEach(text => {
+                const split = new SplitType(text, { types: 'words' });
+                gsap.from(split.words, {
+                    opacity: 0.1,
+                    stagger: 0.1,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: text,
+                        start: "top 80%",
+                        end: "bottom 50%",
+                        scrub: true
+                    }
+                });
+            });
+        });
+
+        // --- 10. Horizontal Draggable slider pseudo-code for Vacantes ---
+        const vacantesContainer = document.getElementById('vacantes-container');
+        const dragSection = document.getElementById('drag-section');
+        if (vacantesContainer && dragSection) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            dragSection.addEventListener('mousedown', (e) => {
+                isDown = true;
+                document.body.classList.add('dragging');
+                startX = e.pageX - vacantesContainer.offsetLeft;
+                scrollLeft = vacantesContainer.scrollLeft;
+            });
+            dragSection.addEventListener('mouseleave', () => { isDown = false; document.body.classList.remove('dragging'); });
+            dragSection.addEventListener('mouseup', () => { isDown = false; document.body.classList.remove('dragging'); });
+            dragSection.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - vacantesContainer.offsetLeft;
+                const walk = (x - startX) * 2;
+                vacantesContainer.scrollLeft = scrollLeft - walk;
+            });
+        }
+    </script>
+</body>
+</html>
