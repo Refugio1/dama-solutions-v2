@@ -21,6 +21,10 @@
     <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <!-- Splide Carousel (Clientes) -->
+    <link rel="stylesheet" href="https://unpkg.com/@splidejs/splide@4.1.4/dist/css/splide.min.css"
+        integrity="sha384-RQYEYzAnHyG0swTqlleCCsKHN9pUKyYMflAk6KEjvY6KhE5MLlvjwZkai5538g2T" crossorigin="anonymous">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -239,6 +243,31 @@
         }
         .group-marquee:hover .animate-marquee {
             animation-play-state: paused;
+        }
+
+        /* Clientes - Splide Auto Scroll */
+        .clients-splide .splide__track {
+            -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+            mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+        }
+        .clients-splide .splide__list {
+            align-items: center;
+        }
+        .client-logo-placeholder {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: rgba(15, 23, 42, 0.35);
+            white-space: nowrap;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            transition: color 0.3s ease;
+        }
+        .client-logo-placeholder:hover {
+            color: #0F172A;
         }
     </style>
 </head>
@@ -875,6 +904,70 @@
         </div>
     </section>
 
+    <!-- 7.5. CLIENTES (SPLIDE AUTO SCROLL) -->
+    <section class="py-32 bg-brand-light text-black px-6 md:px-12 border-t border-black/5">
+        <div class="max-w-[1400px] mx-auto">
+            <p class="text-center font-sans text-xs md:text-sm uppercase tracking-widest font-bold text-black/50 mb-16">
+                Empresas que confían en nosotros</p>
+
+            <!-- TODO: reemplazar cada .client-logo-placeholder por <img src="logo-cliente.png" alt="Nombre Cliente"> cuando existan los logos reales -->
+            <div id="clients-splide" class="splide clients-splide" aria-label="Logos de clientes">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <li class="splide__slide flex items-center justify-center">
+                            <div class="client-logo-placeholder">
+                                <i class="ph-fill ph-buildings text-3xl"></i>
+                                <span>Cliente 01</span>
+                            </div>
+                        </li>
+                        <li class="splide__slide flex items-center justify-center">
+                            <div class="client-logo-placeholder">
+                                <i class="ph-fill ph-factory text-3xl"></i>
+                                <span>Cliente 02</span>
+                            </div>
+                        </li>
+                        <li class="splide__slide flex items-center justify-center">
+                            <div class="client-logo-placeholder">
+                                <i class="ph-fill ph-gear-six text-3xl"></i>
+                                <span>Cliente 03</span>
+                            </div>
+                        </li>
+                        <li class="splide__slide flex items-center justify-center">
+                            <div class="client-logo-placeholder">
+                                <i class="ph-fill ph-lightning text-3xl"></i>
+                                <span>Cliente 04</span>
+                            </div>
+                        </li>
+                        <li class="splide__slide flex items-center justify-center">
+                            <div class="client-logo-placeholder">
+                                <i class="ph-fill ph-airplane-tilt text-3xl"></i>
+                                <span>Cliente 05</span>
+                            </div>
+                        </li>
+                        <li class="splide__slide flex items-center justify-center">
+                            <div class="client-logo-placeholder">
+                                <i class="ph-fill ph-mountains text-3xl"></i>
+                                <span>Cliente 06</span>
+                            </div>
+                        </li>
+                        <li class="splide__slide flex items-center justify-center">
+                            <div class="client-logo-placeholder">
+                                <i class="ph-fill ph-drop text-3xl"></i>
+                                <span>Cliente 07</span>
+                            </div>
+                        </li>
+                        <li class="splide__slide flex items-center justify-center">
+                            <div class="client-logo-placeholder">
+                                <i class="ph-fill ph-car-profile text-3xl"></i>
+                                <span>Cliente 08</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- 8. VACANTES (AUTO CAROUSEL) -->
     <section id="vacantes" class="pt-40 pb-64 lg:pb-80 bg-black border-y border-white/10 overflow-hidden">
         <div class="max-w-[1400px] mx-auto px-6 md:px-12 mb-20 flex justify-between items-end fade-up">
@@ -1131,6 +1224,14 @@
         integrity="sha384-o/NmTUMyj0xBXquK9mLCg/ER0KlJxjnA/2fPgeg6H5acZfxPTGuWiwDSnPZxw/8o"
         crossorigin="anonymous"></script>
 
+    <!-- Splide Carousel + Auto Scroll extension -->
+    <script src="https://unpkg.com/@splidejs/splide@4.1.4/dist/js/splide.min.js"
+        integrity="sha384-RbYB5yr9jD1p+2OHlV3KzOBLAY48CbFsJ87bXEFYINGgOlQJNE4cEjTUf+Q2fygb"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@splidejs/splide-extension-auto-scroll@0.5.3/dist/js/splide-extension-auto-scroll.min.js"
+        integrity="sha384-10Fh7FCq6vJI5Wuf0wv6nj9zcFJhfBWOYq8t0LXil6xFLu3GAviHPJhZPXAPl463"
+        crossorigin="anonymous"></script>
+
     <script>
         // Navbar Scroll Effect
         const mainNav = document.getElementById('main-nav');
@@ -1379,6 +1480,26 @@
                 const walk = (x - startX) * 2;
                 vacantesContainer.scrollLeft = scrollLeft - walk;
             });
+        }
+
+        // --- 11. Clientes (Splide Auto Scroll) ---
+        const clientsSplideEl = document.getElementById('clients-splide');
+        if (clientsSplideEl) {
+            const clientsSplide = new Splide(clientsSplideEl, {
+                type: 'loop',
+                drag: 'free',
+                arrows: false,
+                pagination: false,
+                autoWidth: true,
+                gap: '4rem',
+                autoScroll: {
+                    speed: 1,
+                    pauseOnHover: true,
+                    pauseOnFocus: false,
+                    rewind: false,
+                },
+            });
+            clientsSplide.mount(window.splide.Extensions);
         }
     </script>
 </body>
